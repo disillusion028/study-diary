@@ -29,7 +29,7 @@
 ## task5 ##
 
 #### leetcode题目 ####
-每天刷点题目保持状态，并且隔一段时间上传github以便自己的code review
+每天刷点题目保持状态，并且隔一段时间上传github以便自己的code review 
 
 == 每天的阅读要做笔记，整理成gitbook上传以便review ==
 
