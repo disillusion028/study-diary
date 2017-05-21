@@ -130,3 +130,4 @@ int main(){
     
     return 0;
 }
+//这里的for_each 用不好啊？？求教
