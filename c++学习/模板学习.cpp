@@ -71,9 +71,11 @@ void Vec<T>::reserve(const int n){
 template <typename T> 
 void Vec<T>::free(){
     if(elements){
-        for(auto p=first_free;p!=elements;){
-            alloc.destroy(--p);
-        }
+        std::cout<<typeid(elements).name()<<std::endl;
+        // for(auto p=first_free;p!=elements;){
+        //     alloc.destroy(--p);
+        // }
+        std::for_each(elements,first_free,[&](T& p){alloc.destroy(&p);});
         alloc.deallocate(elements,cap-elements);
     }
 }
@@ -117,6 +119,15 @@ void Vec<T>::reallocate(){
 //static 成员需要在.cpp中声明！
 template <typename T>
 std::allocator<T> Vec<T>::alloc;
+class myclass{
+public:
+    myclass(){
+        std::cout<<"alloc"<<std::endl;
+    }
+    ~myclass(){
+        std::cout<<"free"<<std::endl;
+    }
+};
 int main(){
     Vec<std::string> myvec={"sd","pf"};
     myvec.push_back("abcd");
@@ -127,6 +138,8 @@ int main(){
     std::cout<<myvec<<std::endl;
     myvec.reserve(1);
     std::cout<<myvec.capacity()<<std::endl;
-    
+    // Vec<myclass> myvec2;
+    // myvec2.push_back(myclass());
+    // std::cout<<myvec2.size()<<std::endl;
     return 0;
 }
