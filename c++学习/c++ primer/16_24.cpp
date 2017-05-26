@@ -7,6 +7,9 @@ public:
     typedef typename std::vector<T>::size_type size_type;
     Blob ();
     Blob (std::initializer_list<T> il);
+    Blob (std::vector<T> vt);
+    template <typename IT>
+    Blob (IT ia,IT ib);
     size_type size() const {return data->size();}
     bool empty() const{return data->empty();}
     void push_back(const T &t){data->push_back(std::move(t));}
@@ -17,6 +20,15 @@ private:
     std::shared_ptr<std::vector<T>>data;
     void check(size_type i,const std::string &msg)const;
 };
+template <typename T>
+Blob<T>::Blob(std::vector<T> vt):
+data(std::make_shared<std::vector<T>>(vt)){}
+
+template <typename T>
+template<typename IT>
+Blob<T>::Blob(IT ia,IT ib):
+data(std::make_shared<std::vector<T>>(ia,ib)){}
+
 template <typename T>
 void Blob<T>::check(size_type i,const std::string &msg)const
 {
@@ -50,9 +62,12 @@ data(std::make_shared<std::vector<T>>(il)){}
 int main(){
     Blob <int> ia;
     Blob <int> ia2={0,1,2,3,4};
-    for(size_t i=0;i!=ia2.size();++i){
-        ia2[i]=i*i;
-        std::cout<<ia2[i]<<"  ";
+    Blob <int> ia3(ia2);
+    std::vector<int> v1({1,2,3,4,5,6});
+    Blob <int> ia4(v1.begin(),v1.end());
+    for(size_t i=0;i!=ia3.size();++i){
+        ia3[i]=i*i;
+        std::cout<<ia3[i]<<"  ";
     }
     return 0;
 }

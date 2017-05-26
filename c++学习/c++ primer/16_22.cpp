@@ -10,14 +10,16 @@ using namespace std;
 class DebugDelete{
 public:
     DebugDelete(std::ostream &s=std::cerr):os(s){}
+    static int ct;
     template <typename T> 
     void operator() (T *p) const{
-        os<<"deleting ptr"<<std::endl;
+        os<<"deleting ptr "<<ct++<<std::endl;
         delete p;
     }
 private:
     std::ostream &os;
 };
+int DebugDelete::ct=0;
 class QueryResult;
 class TextQuery{
 public:

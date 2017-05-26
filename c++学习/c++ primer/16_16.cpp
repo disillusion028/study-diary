@@ -13,6 +13,7 @@ public:
     Vec &operator=(const Vec&);
     ~Vec();
     void push_back(const T&);
+    template <class...Args>void emplace_back(Args&&...);
     size_t size() const {return first_free-elements;}
     size_t capacity() const {return cap-elements;}
     T *begin() const {return elements;}
@@ -47,6 +48,12 @@ void Vec<T>::push_back(const T&s){
     chk_n_alloc();
     alloc.construct(first_free++,s);
 }
+template <typename T>
+template<class... Args> 
+void Vec<T>::emplace_back(Args&&... args){
+    chk_n_alloc();
+    alloc.construct(first_free++,std::forward<Args>(args)...);
+}
 template <typename T> 
 std::pair<T*,T*>
 Vec<T>::alloc_n_copy(const T *b,const T *e){
@@ -76,7 +83,7 @@ void Vec<T>::free(){
         //     alloc.destroy(--p);
         // }
         std::for_each(elements,first_free,[&](T& p){p.~T();});
-	//for_each中对p的调用已经解构了，所以用 T&
+	    //for_each中对p的调用已经解构了，所以用 T&
         alloc.deallocate(elements,cap-elements);
     }
 }
@@ -131,9 +138,12 @@ public:
 };
 int main(){
     // Vec<std::string> myvec={"sd","pf"};
+    // std::string mystr="hahaha";
+    // myvec.emplace_back(mystr);
     // myvec.push_back("abcd");
     // myvec.push_back("asdf");
     // myvec.push_back("ss");
+    // myvec.emplace_back(10,'c');
     // std::cout<<myvec.size()<<std::endl;
     // std::cout<<myvec.capacity()<<std::endl;
     // std::cout<<myvec<<std::endl;
