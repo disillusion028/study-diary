@@ -1,5 +1,6 @@
 ## std::move 和 右值 概念及使用的学习
 大部分是我自己的翻译，可能不是很准确，来源于[link](http://thbecker.net/articles/rvalue_references/section_01.html);   
+ 有篇博文说的还不错 ，[another link](http://www.cnblogs.com/catch/p/3507883.html);
 ### Intro   
 右值引用是C++11标准的新特性。
 
