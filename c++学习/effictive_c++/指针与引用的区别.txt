@@ -1,0 +1,30 @@
+1. 没有所谓的null reference，一个reference必须总代表某个对象。
+	所以如果你有一个变量，其目的是用来指向（代表）另一个对象，但是也有可能它不指向（代表）任何对象，那么你应该使用pointer，因为你可以将pointer设为null。
+2. 由于reference一定得代表某个对象，C++因此要求reference必须有初值，但是pointer就没有这样的限制：
+	string& rs;// wrong!
+	string* ps;// right but dangerous
+	"没有所谓的 null reference"这个事实意味使用reference可能会比使用pointer更富效率。这是因为使用reference之前不需要测试其有效性，如果使用pointers，通常就得测试它是否为null。
+void printDouble(const double &rd){
+	cout<<rd;
+}
+void printDouble(const double *pd){
+	if(pd){	
+		cout<<*pd;
+	}
+}
+
+3. pointers 和reference之间的另一个重要差异就是，pointers 可以被重新赋值，指向另一个对象，reference 却总是指向（代表）它最初获得的那个对象：
+string s1 ("Nancy");
+string s2 ("Clancy");
+
+string& rs = s1;
+string *ps = &s1;
+rs = s2;	//rs 仍然代表s1，但是s1的值现在变成了“Clancy”
+ps = &s2;	//ps 现在指向s2，s1没有变化
+
+	一般而言，当你需要考虑“不指向任何对象”的可能性时，或是考虑“在不同事件指向不同对象”的能力时，应该采用pointer 。
+
+conclusion:
+ 当你知道你需要指向某个东西，而且绝不会改变指向其他东西，或是当你实现一个操作符而其语法需求无法由pointers达成，你就应该选择reference，any other time， use pointers。
+
+
