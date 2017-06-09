@@ -41,6 +41,7 @@ public:
             cout<<"deleted"<<endl;
         }
     }
+private:
     T* pointer;
     size_t* refcount;
 
