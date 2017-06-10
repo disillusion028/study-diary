@@ -3,6 +3,8 @@
 #include <random>
 #include <algorithm>
 #include <fstream>
+#include <ctime>
+#include <queue>
 template<typename T>
 void RbTree<T>::LeftRotate(RbNode<T>* x){
     RbNode<T> *y=x->right;
@@ -82,7 +84,8 @@ void RbTree<T>::RbInsertFixup(RbNode<T> *z){
     root->color=BLACK;
 }
 template<typename T>
-void RbTree<T>::RbInsert(RbNode<T> *z){
+void RbTree<T>::RbInsert(const T& zz){
+    RbNode<T> *z=new RbNode<T>(zz);
     RbNode<T> *y=Nil;
     RbNode<T> *x=root;
     while(x!=Nil){//find where this Node should be put 
@@ -106,6 +109,11 @@ void RbTree<T>::RbInsert(RbNode<T> *z){
     z->right=Nil;
     z->color=RED;
     RbInsertFixup(z);//fix up red-black balance
+    cnt++;
+}
+template<typename T>
+int RbTree<T>::getCount(){
+    return cnt;
 }
 template<typename T>
 void RbTree<T>::RbTransplant(RbNode<T> *u,RbNode<T> *v){
@@ -165,6 +173,9 @@ void RbTree<T>::RbDelete(RbNode<T> *z){
     }
     if(yOriColor==BLACK)
         RbDeleteFixup(x);
+    cnt--;
+    delete z;
+    z=nullptr;
 }
 template<typename T>
 void RbTree<T>::RbDeleteFixup(RbNode<T> *x){
@@ -226,6 +237,44 @@ void RbTree<T>::RbDeleteFixup(RbNode<T> *x){
     }
     x->color=BLACK;
 }
+template<typename T>
+std::pair<bool, RbNode<T>*> RbTree<T>::RbFind(const T &t){
+    RbNode<T>* ret=root;
+    while(ret!=Nil&&ret->val!=t){
+        if(ret->val>t){
+            ret=ret->left;
+        }
+        else if(ret->val<t){
+            ret=ret->right;
+        }
+    }
+    if(ret==Nil){
+        return {false,ret};
+    }
+    else return {true,ret};
+}
+template<typename T>
+void RbTree<T>::RbClear()
+{
+    std::queue<RbNode<T>*> myqueue;
+    if(this->root!=this->Nil&&this->root!=nullptr)
+        myqueue.push(this->root);
+    while(!myqueue.empty()){
+        RbNode<T>* temp=myqueue.front();
+        myqueue.pop();
+        if(temp->left!=Nil){
+            myqueue.push(temp->left);
+        }
+        if(temp->right!=Nil){
+            myqueue.push(temp->right);
+        }
+
+        delete temp;
+        temp=nullptr;
+        this->cnt--;
+    }
+    root=nullptr;
+}
 template<typename TT>
 ostream& operator<<(ostream& os,RbTree<TT> *T){
     // level travel
@@ -239,9 +288,11 @@ ostream& operator<<(ostream& os,RbTree<TT> *T){
             if(myvec[i]!=T->Nil){
                 os<<"(val):"<<myvec[i]->val<<"  "<<"(color):"<<myvec[i]->color<<"  ";
                 if(myvec[i]->left!=T->Nil){
+                    if(myvec[i]->color==RED&&myvec[i]->left->color==RED)std::cerr<<"error with rbtree"<<std::endl;
                     vectemp.push_back(myvec[i]->left);
                 }
                 if(myvec[i]->right!=T->Nil){
+                    if(myvec[i]->color==RED&&myvec[i]->right->color==RED)std::cerr<<"error with rbtree"<<std::endl;                    
                     vectemp.push_back(myvec[i]->right);
                 }
             }
@@ -252,30 +303,44 @@ ostream& operator<<(ostream& os,RbTree<TT> *T){
     }
     return os;
 }
+
 int main(){
-    RbTree<int> *T=new RbTree<int>();
-    std::vector<int> va;
-    va.reserve(100000);
-    for(int i=0;i<100000;i++){
-        va.push_back(i);
+    {
+        RbTree<int> *T=new RbTree<int>();
+        std::vector<int> va;
+        va.reserve(10);
+        for(int i=0;i<10;i++){
+            va.push_back(i);
+        }
+        std::random_shuffle(va.begin(),va.end());//,std::mt19937{std::random_device{}()}
+        
+        std::clock_t a_start=std::clock();
+        for(int i=0;i<va.size();i++){
+            T->RbInsert(va[i]);
+        }
+        std::clock_t a_end=std::clock();
+        std::cout<<(a_end-a_start)*1000/CLOCKS_PER_SEC<<"ms"<<std::endl;
+        std::ofstream ofs("/home/caoqi/GITs/study diary/c++learning/RBtree/res2.txt");
+        if(!ofs.is_open()){std::cout<<"error"<<std::endl;}
+        
+        ofs<<T;
+        std::clock_t b_start=std::clock();
+        std::pair<bool,RbNode<int>*> pairret=T->RbFind(3333);
+        std::clock_t b_end=std::clock();
+        std::cout<<(b_end-b_start)<<"us"<<std::endl;
+        std::cout<<pairret.second->color<<"  "<<pairret.second->val<<std::endl;
+        ofs.close();
+        delete T;
+        T=nullptr;
     }
-    std::shuffle(va.begin(),va.end(),std::mt19937{std::random_device{}()});
-    RbNode<int> *A[va.size()];
-    for(int i=0;i<va.size();i++){
-        A[i]=new RbNode<int>(va[i]);
-        T->RbInsert(A[i]);
-    }
-    std::ofstream ofs("/home/caoqi/GITs/study diary/c++learning/RBtree/res.txt");
-    if(!ofs.is_open()){std::cout<<"error"<<std::endl;}
-    // for(int i=0;i<va.size();i++){
-    //     T->RbDelete(A[i]);
-    //     std::cout<<T;
-    //     std::cout<<std::endl;
-    // }
-    ofs<<T;
-    delete T;
-    for(int i=0;i<va.size();i++){
-        delete A[i];
+    {
+        MySet<int> ms;
+        std::vector<int> vb;
+        for(int i=0;i<10;i++){
+            ms.insert(i);
+        }
+        ms.erase(6);
+        ms.print();
     }
     return 0;
 }
