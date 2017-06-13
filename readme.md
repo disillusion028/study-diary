@@ -70,3 +70,4 @@ leetcode总数写到了200题，感觉还是很弱，写题思路不清晰和速
 https://wizardforcel.gitbooks.io/gopl-zh/content/index.html
 
 
+我勒个去，CSAPP 太好看了，允许我多花两周时间来仔细看它，这两周认真啃一把CSAPP！

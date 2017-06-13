@@ -1,6 +1,7 @@
 #include <iostream>
 #include<typeinfo>
 #include <stdlib.h>
+#include <functional>
 using namespace std;
 int main(){
    // int x=300*400*500*600;
