@@ -1,35 +1,10 @@
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <fcntl.h>
+#include "../mycsapp.h"
 
-#define RIO_BUFSIZE 128
-#define MAXLINE 128
-typedef struct{
-    int rio_fd;
-    int rio_cnt;
-    char *rio_bufptr;
-    char rio_buf[RIO_BUFSIZE];
-}rio_t;
 void rio_readinitb(rio_t *rp,int fd){
     rp->rio_fd=fd;
     rp->rio_cnt=0;
     rp->rio_bufptr=rp->rio_buf;
 }
-
-ssize_t rio_readn(int fd,void *usrbuf,size_t n);
-//从描述符fd的当前文件位置最多传送n个字节到内存位置usrbuf
-ssize_t rio_written(int fd,void *usrbuf,size_t n);
-//从位置usrbuf传送n个字节到描述符fd
-void rio_readinitb(rio_t *rp,int fd);
-
-ssize_t rio_readlineb(rio_t *rp,void *usrbuf,size_t maxlen);
-//从内部读缓冲区复制一个文本行，当缓冲区变空时，会自动调用read重新填满缓冲区
-ssize_t rio_readnb(rio_t *rp,void * usrbuf,size_t n);
-//rio_readn带缓冲区的版本
 
 ssize_t rio_readn(int fd,void *usrbuf,size_t n){
     size_t nleft=n;
@@ -50,7 +25,7 @@ ssize_t rio_readn(int fd,void *usrbuf,size_t n){
     }
     return (n-nleft);
 }
-ssize_t rio_written(int fd,void *usrbuf,size_t n){
+ssize_t rio_writen(int fd,void *usrbuf,size_t n){
     size_t nleft=n;
     ssize_t nwritten;
     char *bufp=usrbuf;
@@ -124,25 +99,25 @@ ssize_t rio_readnb(rio_t *rp,void *usrbuf,size_t n){
     }
     return (n-nleft);
 }
-int main(int argc,char **argv){
-    int n;
-    rio_t rio;
-    char buf[MAXLINE];
-    char *infile=NULL;
-    if(argc==2){
-        infile=argv[1];
-    }
-    rio_readinitb(&rio,STDIN_FILENO);
-    if(infile!=NULL){
-        int fd=open(infile,O_RDONLY,0);
-        dup2(fd,STDIN_FILENO);
-    }//homework 10.10
-    while((n=rio_readlineb(&rio,buf,MAXLINE))!=0)
-        rio_written(STDOUT_FILENO,buf,n);
-    /* 10.7 homework
-    while((n=rio_readn(0,buf,RIO_BUFSIZE))!=0){
-        rio_written(1,buf,n);
-    }
-    */
-    return 0;
-}
+// int main(int argc,char **argv){
+//     int n;
+//     rio_t rio;
+//     char buf[MAXLINE];
+//     char *infile=NULL;
+//     if(argc==2){
+//         infile=argv[1];
+//     }
+//     rio_readinitb(&rio,STDIN_FILENO);
+//     if(infile!=NULL){
+//         int fd=open(infile,O_RDONLY,0);
+//         dup2(fd,STDIN_FILENO);
+//     }//homework 10.10
+//     while((n=rio_readlineb(&rio,buf,MAXLINE))!=0)
+//         rio_writen(STDOUT_FILENO,buf,n);
+//     /* 10.7 homework
+//     while((n=rio_readn(0,buf,RIO_BUFSIZE))!=0){
+//         rio_writen(1,buf,n);
+//     }
+//     */
+//     return 0;
+// }
