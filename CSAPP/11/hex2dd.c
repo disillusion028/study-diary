@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#define MAXBUF 20
+#define MAXBUF 8192
 int main(int argc,char ** argv){
     if(argc!=2)exit(-1);
     struct in_addr inaddr;

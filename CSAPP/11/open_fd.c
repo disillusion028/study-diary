@@ -1,5 +1,6 @@
 #include "../mycsapp.h"
-
+//open_clientfd
+//open_listenfd
 //建立与服务器的连接，该服务器运行在主机hostname上，并在端口号port上监听连接请求
 //它返回一个打开的套接字描述符，该描述符准备好了，可以用Unix I/O 函数做输入和输出
 int open_clientfd(char *hostname,char *port){

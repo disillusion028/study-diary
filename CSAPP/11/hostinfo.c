@@ -1,6 +1,5 @@
 #include "../mycsapp.h"
 
-#define MAXLINE 128
 
 int main(int argc, char ** argv){
     //just like nslookup
