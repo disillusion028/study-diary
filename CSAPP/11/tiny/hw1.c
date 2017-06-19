@@ -3,6 +3,7 @@
  * tiny.c - A simple, iterative HTTP/1.0 Web server that uses the 
  *     GET method to serve static and dynamic content.
  */
+ //gcc -o hw1 hw1.c csapp.c -lpthread
 #include "csapp.h"
 
 void doit(int fd);
@@ -10,26 +11,10 @@ void read_requesthdrs(rio_t *rp);
 int parse_uri(char *uri, char *filename, char *cgiargs);
 void serve_static(int fd, char *filename, int filesize);
 void get_filetype(char *filename, char *filetype);
-int serve_dynamic(int fd, char *filename, char *cgiargs);
+void serve_dynamic(int fd, char *filename, char *cgiargs);
 void clienterror(int fd, char *cause, char *errnum, 
 		 char *shortmsg, char *longmsg);
-static volatile int numLiveChildren=0;
-static void sigchldHandler(int sig){
-    int status,savedErrno;
-    pid_t childPid;
-
-    savedErrno=errno;
-    printf("handler: Caught SIGCHLD\n");
-
-    while((childPid=waitpid(-1,&status,WNOHANG))>0){
-        printf(" handler :Reaped child %ld",(long)childPid);
-        numLiveChildren--;
-    }
-
-    while((childPid==-1&&errno!=ECHILD))
-        unix_error("waitpid");
-    errno=savedErrno;
-}
+void ret_same(int fd);
 int main(int argc, char **argv) 
 {
     int listenfd, connfd;
@@ -42,7 +27,7 @@ int main(int argc, char **argv)
 	fprintf(stderr, "usage: %s <port>\n", argv[0]);
 	exit(1);
     }
-
+    
     listenfd = Open_listenfd(argv[1]);
     while (1) {
 	clientlen = sizeof(clientaddr);
@@ -50,12 +35,35 @@ int main(int argc, char **argv)
         Getnameinfo((SA *) &clientaddr, clientlen, hostname, MAXLINE, 
                     port, MAXLINE, 0);
         printf("Accepted connection from (%s, %s)\n", hostname, port);
-	doit(connfd);                                             //line:netp:tiny:doit
+	//ret_same(connfd);  homework1
+    doit(connfd);                                             //line:netp:tiny:doit
 	Close(connfd);                                            //line:netp:tiny:close
     }
 }
 /* $end tinymain */
-
+void ret_same(int fd){
+    rio_t rio;
+    char body[MAXLINE];
+    char buf[MAXLINE];
+    char buf2[MAXLINE];
+    Rio_readinitb(&rio,fd);
+    if(!Rio_readlineb(&rio,buf2,MAXLINE))return;
+    
+    sprintf(body, "<html><title>Tiny Same Response</title>");
+    sprintf(body, "%s<body bgcolor=""ffffff"">\r\n", body);
+    sprintf(body, "%s<p>%s\r\n", body, buf2);
+    sprintf(body, "%s<hr><em>The Tiny Web server</em>\r\n", body);
+    
+    int len=strlen(body);
+    /* Send response headers to client */
+    sprintf(buf, "HTTP/1.1 200 OK\r\n");    //line:netp:servestatic:beginserve
+    sprintf(buf, "%sServer: Tiny Web Server\r\n", buf);
+    sprintf(buf, "%sConnection: close\r\n", buf);
+    sprintf(buf, "%sContent-length: %d\r\n", buf,len);
+    sprintf(buf, "%sContent-type: %s\r\n\r\n", buf, "text/html");
+    Rio_writen(fd,buf,strlen(buf));    
+    Rio_writen(fd,body,len);
+}
 /*
  * doit - handle one HTTP request/response transaction
  */
@@ -67,7 +75,8 @@ void doit(int fd)
     char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE];
     char filename[MAXLINE], cgiargs[MAXLINE];
     rio_t rio;
-
+    int svfd=open("log.txt",O_APPEND|O_WRONLY);//homework
+        dup2(svfd,STDOUT_FILENO);
     /* Read request line and headers */
     Rio_readinitb(&rio, fd);
     if (!Rio_readlineb(&rio, buf, MAXLINE))  //line:netp:doit:readrequest
@@ -89,13 +98,13 @@ void doit(int fd)
 	return;
     }                                                    //line:netp:doit:endnotfound
 
-    if (is_static==1||is_static==2) { /* Serve static content */          
-        if (!(S_ISREG(sbuf.st_mode)) || !(S_IRUSR & sbuf.st_mode)) { //line:netp:doit:readable
-            clienterror(fd, filename, "403", "Forbidden",
-                "Tiny couldn't read the file");
-            return;
-        }
-	    serve_static(fd, filename, sbuf.st_size);        //line:netp:doit:servestatic
+    if (is_static) { /* Serve static content */          
+	if (!(S_ISREG(sbuf.st_mode)) || !(S_IRUSR & sbuf.st_mode)) { //line:netp:doit:readable
+	    clienterror(fd, filename, "403", "Forbidden",
+			"Tiny couldn't read the file");
+	    return;
+	}
+	serve_static(fd, filename, sbuf.st_size);        //line:netp:doit:servestatic
     }
     else { /* Serve dynamic content */
 	if (!(S_ISREG(sbuf.st_mode)) || !(S_IXUSR & sbuf.st_mode)) { //line:netp:doit:executable
@@ -134,6 +143,7 @@ void read_requesthdrs(rio_t *rp)
 int parse_uri(char *uri, char *filename, char *cgiargs) 
 {
     char *ptr;
+
     if (!strstr(uri, "cgi-bin")) {  /* Static content */ //line:netp:parseuri:isstatic
 	strcpy(cgiargs, "");                             //line:netp:parseuri:clearcgi
 	strcpy(filename, ".");                           //line:netp:parseuri:beginconvert1
@@ -143,32 +153,16 @@ int parse_uri(char *uri, char *filename, char *cgiargs)
 	return 1;
     }
     else {  /* Dynamic content */                        //line:netp:parseuri:isdynamic
-	ptr = index(uri, '?');
-                               //line:netp:parseuri:beginextract
+	ptr = index(uri, '?');                           //line:netp:parseuri:beginextract
 	if (ptr) {
-        //f=%d&s=%d
-        // change it to %d&%d
-        char buf[MAXLINE];
-        strcpy(buf,ptr+1);// buf = f=%d&s=%d
-        size_t i,j=0;
-        size_t sz=strlen(buf);
-        for(i=0;i<=sz;i++){
-            if(isdigit(buf[i])||buf[i]=='&')
-            {
-                cgiargs[j++]=buf[i];
-            }
-        }
-        cgiargs[j]='\0';
-        *ptr='\0';
-        strcpy(filename, ".");                           //line:netp:parseuri:beginconvert2
-	    strcat(filename, uri);                           //line:netp:parseuri:endconvert2
-        return 0;
+	    strcpy(cgiargs, ptr+1);
+	    *ptr = '\0';
 	}
-	else{ 
+	else 
 	    strcpy(cgiargs, "");                         //line:netp:parseuri:endextract
-        strcpy(filename,"./adderform.html");
-        return 2;
-    }
+	strcpy(filename, ".");                           //line:netp:parseuri:beginconvert2
+	strcat(filename, uri);                           //line:netp:parseuri:endconvert2
+	return 0;
     }
 }
 /* $end parse_uri */
@@ -184,7 +178,7 @@ void serve_static(int fd, char *filename, int filesize)
  
     /* Send response headers to client */
     get_filetype(filename, filetype);       //line:netp:servestatic:getfiletype
-    sprintf(buf, "HTTP/1.0 200 OK\r\n");    //line:netp:servestatic:beginserve
+    sprintf(buf, "HTTP/1.1 200 OK\r\n");    //line:netp:servestatic:beginserve
     sprintf(buf, "%sServer: Tiny Web Server\r\n", buf);
     sprintf(buf, "%sConnection: close\r\n", buf);
     sprintf(buf, "%sContent-length: %d\r\n", buf, filesize);
@@ -214,6 +208,8 @@ void get_filetype(char *filename, char *filetype)
 	strcpy(filetype, "image/png");
     else if (strstr(filename, ".jpg"))
 	strcpy(filetype, "image/jpeg");
+    //else if(strstr(filename,".mpg"))
+    //strcpy(filetype,"audio/*");
     else
 	strcpy(filetype, "text/plain");
 }  
@@ -223,7 +219,7 @@ void get_filetype(char *filename, char *filetype)
  * serve_dynamic - run a CGI program on behalf of the client
  */
 /* $begin serve_dynamic */
-int serve_dynamic(int fd, char *filename, char *cgiargs) 
+void serve_dynamic(int fd, char *filename, char *cgiargs) 
 {
     char buf[MAXLINE], *emptylist[] = { NULL };
 
@@ -232,37 +228,17 @@ int serve_dynamic(int fd, char *filename, char *cgiargs)
     Rio_writen(fd, buf, strlen(buf));
     sprintf(buf, "Server: Tiny Web Server\r\n");
     Rio_writen(fd, buf, strlen(buf));
-    
-    int sigCnt=0;
-    struct sigaction sa;
-    sigset_t blockMask,emptyMask;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags=0;
-    sa.sa_handler=sigchldHandler;
-    if(sigaction(SIGCHLD,&sa,NULL)==-1)
-        unix_error("sigaction");
-    sigemptyset(&blockMask);
-    sigaddset(&blockMask,SIGCHLD);
-    if(sigprocmask(SIG_SETMASK,&blockMask,NULL)==-1)
-        unix_error("sigprocmask");
-    numLiveChildren++;
+  
     if (Fork() == 0) { /* Child */ //line:netp:servedynamic:fork
 	/* Real server would set all CGI vars here */
 	setenv("QUERY_STRING", cgiargs, 1); //line:netp:servedynamic:setenv
 	Dup2(fd, STDOUT_FILENO);         /* Redirect stdout to client */ //line:netp:servedynamic:dup2
 	Execve(filename, emptylist, environ); /* Run CGI program */ //line:netp:servedynamic:execve
-    _exit(EXIT_SUCCESS);
     }
-    sigemptyset(&emptyMask);
-    while(numLiveChildren>0){
-        if(sigsuspend(&emptyMask)==-1&&errno!=EINTR)
-            unix_error("sigsuspend");
-        sigCnt++;
-    }
-    exit(EXIT_SUCCESS);
-    //Wait(NULL); /* Parent waits for and reaps child */ //line:netp:servedynamic:wait
+    Wait(NULL); /* Parent waits for and reaps child */ //line:netp:servedynamic:wait
 }
 /* $end serve_dynamic */
+
 /*
  * clienterror - returns an error message to the client
  */

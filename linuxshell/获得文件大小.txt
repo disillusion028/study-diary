@@ -1,0 +1,4 @@
+stat --printf="%s" [filename]  // gnu linux
+file_size_kb=`du -k "$filename" | cut -f1`  //posix   get block size
+wc -c [filename]|awk '{print $1}'
+
