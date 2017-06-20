@@ -1,11 +1,11 @@
 cc = gcc
 deps = ../csapp.h
 obj = ../csapp.o
-all : selectecho
+all : badcnt
 
 .PHONY : all
-selectecho: $(obj) echoservers.o
-	$(cc) -o echoservers $(obj) echoservers.o -lpthread
+badcnt: $(obj) badcnt.o
+	$(cc) -o badcnt $(obj) badcnt.o -lpthread
 
 csapp.o: $(deps)
 
@@ -13,4 +13,4 @@ csapp.o: $(deps)
 clean:
 	rm -rf $(obj)
 	rm -rf *.o
-	rm -rf echoservers
+	rm -rf badcnt
