@@ -72,4 +72,5 @@ https://wizardforcel.gitbooks.io/gopl-zh/content/index.html
 
 我勒个去，CSAPP 太好看了，允许我多花两周时间来仔细看它，这两周认真啃一把CSAPP！
 
-memory pool
+memory pool    
+stl list学习一哈，阅读b-tree、b+tree代码
