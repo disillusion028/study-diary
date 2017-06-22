@@ -3,13 +3,14 @@ void echo(int connfd){
     size_t n;
     char buf[MAXLINE];
     rio_t rio;
-
     Rio_readinitb(&rio,connfd);
-    while((n=Rio_readlineb(&rio,buf,MAXLINE))!=0){
+    n=Rio_readlineb(&rio,buf,MAXLINE);
+    if(n!=0){
         printf("server received %d bytes \n", (int)n);
         Rio_writen(connfd,buf,n);
         printf("%s",buf);
     }
+    //if(n==0)Close(connfd);
 }
 void command(){
     char buf[MAXLINE];
@@ -36,7 +37,6 @@ int main(int argc,char **argv){
 
     while(1){
         ready_set=read_set;
-
         //  int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
         //  第一个参数必须设为比三个文件描述符集合中所包含的最大文件描述符号还要大1，该参数让select()变得更有效率。
         //  因为次数内核就不用去检查大于这个值的文件描述符号是否属于这些文件描述符的集合。
@@ -51,5 +51,6 @@ int main(int argc,char **argv){
             echo(connfd);
             Close(connfd);
         }
+        
     }
-}  
+}

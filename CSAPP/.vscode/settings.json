@@ -2,6 +2,7 @@
     "files.associations": {
         "functional": "cpp",
         "cerrno": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "ostream": "cpp"
     }
 }

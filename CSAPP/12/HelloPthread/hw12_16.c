@@ -11,8 +11,8 @@ int main(int argc,char **argv){
         exit(0);
     }
     int N=atoi(argv[1]);
-    if(N>16386||N<0){
-        fprintf(stderr,"Usage: pthread count should be 0-16386\n");
+    if(N>16384||N<0){
+        fprintf(stderr,"Usage: pthread count should be 0-16384\n");
         exit(0);        
     }    
     for(i=0;i<N;i++){
