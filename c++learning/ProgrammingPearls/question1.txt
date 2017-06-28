@@ -1,0 +1,28 @@
+A:
+    给定一个最多包含40亿个随机排列的32位整数的顺序文件，找出一个不在文件中的32位整数（在文件中至少缺失一个这样的数）。
+    在具有足够内存的情况下，如何解决该问题？如果有几个外部的“临时”文件可用，但是仅有几百字节的内存，又该如何解决该问题？
+B:
+    将一个n元一维向量向左旋转i个位置。eg：当n=8且i=3时，向量abcdefgh旋转为defghabc。简单的代码使用一个n元的中间向量在n步内完成该工作。
+    你能否仅使用数十个额外字节的存储空间，在正比于n的时间内完成向量的旋转？
+C：
+    给定一个英语字典，找出其中的所有变位词集合。例如，“pots”，“stop”，“tops”互为变位词，因为每一个单词都可以通过改变其他单词中的字母的顺序来得到。
+
+
+
+B:
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        k %= nums.size();
+        reverse(nums, 0, nums.size()-1);
+        reverse(nums, 0, k-1);
+        reverse(nums, k, nums.size()-1);
+    }
+    void reverse(vector<int>& nums, int start, int end) {
+        while (start < end) {
+            swap(nums[start], nums[end]);
+            start ++;
+            end --;
+        }
+    }
+};

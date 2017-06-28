@@ -22,4 +22,5 @@ int main(){
     // cout<<a.foo(5).x<<endl;
     vector<int> vec={1,2};
     cout<<bar(vec)[0]<<endl;
+    vec.erase(vec,begin());
 }
