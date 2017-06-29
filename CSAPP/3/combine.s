@@ -101,7 +101,7 @@ combine1:
 	movq	%fs:40, %rax
 	movq	%rax, 8(%rsp)
 	xorl	%eax, %eax
-	movq	$0, (%rsi)
+	movq	$0, (%rsi)  
 	cmpq	$0, (%rdi)
 	jle	.L12
 	movq	%rdi, %rbp

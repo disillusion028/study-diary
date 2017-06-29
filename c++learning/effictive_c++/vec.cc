@@ -5,7 +5,7 @@ int main(){
 	vector<int> test{1,2,3};
 	for(auto it=test.begin();it!=test.end();it++){
 		if((*it)==2)
-		test.erase(it);	
+		test.erase(it);	//bugly
 	}
 	return 0;
 }

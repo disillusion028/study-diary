@@ -308,8 +308,8 @@ int main(){
     {
         RbTree<int> *T=new RbTree<int>();
         std::vector<int> va;
-        va.reserve(10);
-        for(int i=0;i<10;i++){
+        va.reserve(1000000);
+        for(int i=0;i<1000000;i++){
             va.push_back(i);
         }
         std::random_shuffle(va.begin(),va.end());//,std::mt19937{std::random_device{}()}
