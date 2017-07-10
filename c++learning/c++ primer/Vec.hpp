@@ -10,6 +10,19 @@ public:
         elements(nullptr),first_free(nullptr),cap(nullptr){ }
     Vec(const std::initializer_list<T>& il);
     Vec(const Vec&);
+    Vec(Vec&& s)noexcept:elements(s.elements),first_free(s.first_free),cap(s.cap){
+        s.elements=s.first_free=s.cap=nullptr;
+    }
+    Vec &operator=(Vec &&rhs)noexcept{
+        if(this!=&rhs){
+            free();
+            elements=rhs.elements;
+            first_free=rhs.first_free;
+            cap=rhs.cap;
+            rhs.elements=rhs.first_free=rhs.cap=nullptr;
+        }
+        return *this;
+    }
     Vec &operator=(const Vec&);
     ~Vec();
     void push_back(const T&);
@@ -78,7 +91,7 @@ void Vec<T>::reserve(const int n){
 template <typename T> 
 void Vec<T>::free(){
     if(elements){
-        std::cout<<typeid(elements).name()<<std::endl;
+        //std::cout<<typeid(elements).name()<<std::endl;
         // for(auto p=first_free;p!=elements;){
         //     alloc.destroy(--p);
         // }
@@ -104,6 +117,7 @@ Vec<T>::~Vec(){free();}
 
 template <typename T> 
 Vec<T>& Vec<T>::operator=(const Vec<T> &rhs){
+    if(this==&rhs)return *this;
     auto data=alloc_n_copy(rhs.begin(),rhs.end());
     free();
     elements=data.first;
@@ -136,21 +150,3 @@ public:
         std::cout<<"free"<<std::endl;
     }
 };
-int main(){
-    // Vec<std::string> myvec={"sd","pf"};
-    // std::string mystr="hahaha";
-    // myvec.emplace_back(mystr);
-    // myvec.push_back("abcd");
-    // myvec.push_back("asdf");
-    // myvec.push_back("ss");
-    // myvec.emplace_back(10,'c');
-    // std::cout<<myvec.size()<<std::endl;
-    // std::cout<<myvec.capacity()<<std::endl;
-    // std::cout<<myvec<<std::endl;
-    // myvec.reserve(1);
-    // std::cout<<myvec.capacity()<<std::endl;
-    Vec<myclass> myvec2;
-    myvec2.push_back(myclass());
-    std::cout<<myvec2.size()<<std::endl;
-    return 0;
-}

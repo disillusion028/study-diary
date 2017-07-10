@@ -13,6 +13,7 @@ class b1{
     }
 };
 class b2{
+    public:
     virtual void f(){
         cout<<"b2::f"<<endl;
     }
@@ -39,9 +40,15 @@ class d:public b1,public b2,public b3{
     void f1(){
         b1::f();
     }
+    virtual void x(){
+        cout<<"dx"<<endl;
+    }
 };
 int main(){
-    d myd;
-    myd.f1();
+    // d myd;
+    // myd.f1();
+    // myd.b2::g();
+    b1 *myb1=new d();
+    myb1->x();
     return 0;
 }

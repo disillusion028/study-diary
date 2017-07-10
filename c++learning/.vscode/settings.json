@@ -1,6 +1,14 @@
 {
     "files.associations": {
         "ostream": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "initializer_list": "cpp",
+        "array": "cpp",
+        "utility": "cpp",
+        "algorithm": "cpp",
+        "exception": "cpp",
+        "new": "cpp"
     }
 }
