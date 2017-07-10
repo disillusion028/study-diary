@@ -10,8 +10,8 @@
 #### Unix&NetWork的学习 ####
 
 + 阅读《apue》/《网络编程》/《TCP/IP详解卷1》(看完了）（并没...       
-+ 学习目标： 实现书上的demo程序     eg：聊天程序 基于线程池的生产者、消费者程序    
-+ CS144 labs http://www.scs.stanford.edu/09au-cs144/lab/reliable.html 巩固一下看了的东西    
++ 学习目标： 实现书上的demo程序     eg：聊天程序 基于线程池的生产者、消费者程序    done
++ CS144 labs http://www.scs.stanford.edu/09au-cs144/lab/reliable.html 巩固一下看了的东西    
 + shell 编程，docker的使用及原理   
 + ......   
 
@@ -21,14 +21,14 @@
 
 + 算法导论上重点部分与某些数据结构的cpp实现    
 + 6.046 视频&算法实现   
-+ 学习目标：能手写堆、avl树、实现红黑树、字典树等数据结构，理解桶排序等   
++ 学习目标：能手写堆(done)、avl树、实现红黑树(done)、字典树等数据结构，理解桶排序等   
  
 ## task4 ##
 
 #### C++的进一步学习 ####
-+ STL源码剖析 （stack/queue/priority_queue/heap等的代码阅读与仿写）
++ STL源码剖析 (stack(done)/queue/priority_queue/heap(done)等的代码阅读与仿写)
 + 掌握STL内存管理、迭代器、traits、典型容器的原理
-+ 阅读《深度探索c++对象模型》、把《Effective C++》看完，掌握c++ 泛型编程、面向对象
++ 阅读《深度探索c++对象模型》、把《Effective C++》看完(done but need review)，掌握c++ 泛型编程、面向对象
 + c++多线程知识的学习（书还没买，感觉上面的活儿太多了，等干完点儿再说）   
 +   ......
    
@@ -40,7 +40,7 @@
 ## task6 ##   
 
 #### 读CSAPP ####   
-CSAPP里的基础知识太重要了，把任务写在这，有空就看看，要把里面的习题给撸了。      
+CSAPP里的基础知识太重要了，把任务写在这，有空就看看，要把里面的习题给撸了。 (almost done)   
 
 ***
 
@@ -53,12 +53,14 @@ CSAPP里的基础知识太重要了，把任务写在这，有空就看看，要
 https://wizardforcel.gitbooks.io/gopl-zh/content/index.html
 
 
-我勒个去，CSAPP 太好看了，允许我多花两周时间来仔细看它，这两周认真啃一把CSAPP！
+我勒个去，CSAPP 太好看了，允许我多花两周时间来仔细看它，这两周认真啃一把CSAPP！()
 
-<<<<<<< HEAD
+<<<<<<< HEAD   
+
 memory pool   
 B+ tree
 =======
 memory pool    
-stl list学习一哈，阅读b-tree、b+tree代码
->>>>>>> ec12d0ef0e276f8ab025a116c57948471769a47e
+stl list学习一哈，阅读b-tree(done)、b+tree代码   
+
+>>>>>>>  ec12d0ef0e276f8ab025a116c57948471769a47e
