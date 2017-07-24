@@ -11,7 +11,6 @@ public:
     }
 protected:
     Singleton1(){
-        
     }
 private:    static Singleton1 *instance;
 };

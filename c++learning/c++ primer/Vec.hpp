@@ -32,8 +32,8 @@ public:
     T *begin() const {return elements;}
     T *end() const {return first_free;}
     void reserve(const int n);
-    template <typename TT> 
-    friend std::ostream &operator<<(std::ostream &os,const Vec<TT> &s);//友元的模板和该类的模板类型不一样
+    //template <typename TT> 
+    //friend std::ostream &operator<<(std::ostream &os,const Vec<TT> &s);//友元的模板和该类的模板类型不一样
  
 private:
     static std::allocator<T> alloc;

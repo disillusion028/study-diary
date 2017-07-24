@@ -45,10 +45,11 @@ class d:public b1,public b2,public b3{
     }
 };
 int main(){
-    // d myd;
-    // myd.f1();
-    // myd.b2::g();
+    d myd;
+    myd.f1();
+    myd.b2::g();
     b1 *myb1=new d();
-    myb1->x();
+    dynamic_cast<d*>(myb1)->f1();
+    cout<<sizeof(b1)<<endl;
     return 0;
 }

@@ -12,6 +12,11 @@
 #include <climits>
 #include <initializer_list>
 #include <utility>
+#include <cassert>
+#include <cmath>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 using namespace std;  
 // void fun(char *s, int a, double f)
@@ -761,16 +766,324 @@ using namespace std;
 // };
 // Singleton1* Singleton1::instance=nullptr;
 
-void fun(initializer_list<pair<string, int>> initp){
-	for (auto &it : initp)
-	{
-		cout << "pair..fisrt:" << it.first << "\nsecond.." << it.second << endl;
-	}
-}
+// void fun(initializer_list<pair<string, int>> initp){
+// 	for (auto &it : initp)
+// 	{
+// 		cout << "pair..fisrt:" << it.first << "\nsecond.." << it.second << endl;
+// 	}
+// }
 
 
+// int main(){
+// 	int a[]{1, 2, 3, 5};
+// 	fun({ { "liu", 2 }, { "feng", 3 } });
+// 	return 0;
+// }
+// class OnlyStack{
+// private:
+//     void *operator new(size_t t){};
+//     void operator delete(void *ptr){}; 
+// public:
+//     OnlyStack(){};
+//     ~OnlyStack(){};
+// };
+// #if 1
+// class OnlyHeap{
+// protected:
+//     ~OnlyHeap(){};
+// public:
+//     OnlyHeap(){};
+//     void Destory(){delete this;}
+// };
+// #endif
+// #if 0
+// class OnlyHeap{
+// protected:
+//     ~OnlyHeap(){}
+//     OnlyHeap(){}
+// public:
+//     static OnlyHeap* Create(){
+//         return new OnlyHeap();
+//     }
+//     void Destory(){
+//         delete this;
+//     }
+// };
+// #endif
+// int main(){
+//     //OnlyHeap* a=OnlyHeap::Create();
+//     OnlyHeap *a=new OnlyHeap();
+//     a->Destory();
+//     OnlyStack b;
+//     //OnlyStack *c=new OnlyStack();
+//     return 0;
+// }
+// class A{
+// public:
+// 	A(int _x){
+// 		this->x=_x;
+// 		cout<<"inital cons"<<endl;
+// 	}
+// //private:
+// 	A(const A &a):x(a.x){
+// 		cout<<"copy constructor"<<endl;
+// 	}
+// 	A(A&& a):x(a.x){
+// 		cout<<"right value constructor"<<endl;
+// 	}
+// 	A& operator=(const A& a){
+// 		cout<<"operator ="<<endl;
+// 		if(this==&a){
+// 			return *this;// useless in this situation
+// 		}
+// 		else{
+// 			this->x=a.x;
+// 			return *this;
+// 		}
+// 	}
+// 	A operator+(const A &a1){
+// 		A t(*this);
+// 		t.x+=a1.x;
+// 		return t;
+// 	}
+// 	A& operator+=(const A &a){
+// 		this->x+=a.x;
+// 		return *this;
+// 	}
+// 	int x;
+// };
+// int main(){
+// 	A a1(3);
+// 	A a2(5);
+// //	A a3(a1+a2);
+// 	cout<<a1.x<<endl;
+// 	A a3(a2);
+// 	cout<<a3.x<<endl;
+// 	A a4(std::move(a1));
+// 	// cout<<&(a4.x)<<endl;
+// 	// cout<<&(a1.x)<<endl;
+// 	//A a5=a2;//copy
+// 	a3=a2;
+// 	A a5=a1+a2;
+// 	cout<<a5.x<<endl;
+// 	a5+=a3;
+// 	cout<<a5.x<<endl;
+// 	return 0;
+// }
+/*
+如果一个数字序列逆置之后跟原序列是一样的就称这样的数字序列为回文序列。例如：
+{1, 2, 1}, {15, 78, 78, 15} , {112} 是回文序列, 
+{1, 2, 2}, {15, 78, 87, 51} ,{112, 2, 11} 不是回文序列。
+现在给出一个数字序列，允许使用一种转换操作：
+选择任意两个相邻的数，然后从序列移除这两个数，并用这两个数字的和插入到这两个数之前的位置(只插入一个和)。
+现在对于所给序列要求出最少需要多少次操作可以将其变成回文序列。
+
+输入描述:
+输入为两行，第一行为序列长度n ( 1 ≤ n ≤ 50)
+第二行为序列中的n个整数item[i]  (1 ≤ iteam[i] ≤ 1000)，以空格分隔。
+
+
+输出描述:
+输出一个数，表示最少需要的转换次数
+
+输入例子1:
+4
+1 1 1 3
+
+输出例子1:
+2
+*/
+// int main(){
+// 	int n,t,x;
+// 	cin>>n;
+// 	x=n;
+// 	assert(n>=0);
+// 	if(n==0){
+// 		cout<<0<<endl;
+// 		return 0;		
+// 	}
+// 	vector<int> vec;
+// 	while(x--){
+// 		cin>>t;
+// 		vec.push_back(t);
+// 	}
+// 	int start=0,end=n-1;
+// 	x=0;
+// 	while(start<=end){
+// 		if(start==end){
+// 			break;
+// 		}
+// 		while(vec[start]>vec[end]){
+// 			vec[end-1]+=vec[end];
+// 			end--;
+// 			x++;
+// 		}
+// 		while(vec[start]<vec[end]){
+// 			vec[start+1]+=vec[start];
+// 			start++;
+// 			x++;
+// 		}
+// 		if(vec[start]==vec[end]&&start!=end){
+// 			start++;
+// 			end--;
+// 		}
+// 	}
+// 	cout<<x<<endl;
+// 	return 0;
+// }
+/*
+[编程题] 优雅的点
+时间限制：1秒
+空间限制：32768K
+小易有一个圆心在坐标原点的圆，小易知道圆的半径的平方。小易认为在圆上的点而且横纵坐标都是整数的点是优雅的，小易现在想寻找一个算法计算出优雅的点的个数，请你来帮帮他。
+例如：半径的平方如果为25
+优雅的点就有：(+/-3, +/-4), (+/-4, +/-3), (0, +/-5) (+/-5, 0)，一共12个点。 
+输入描述:
+输入为一个整数，即为圆半径的平方,范围在32位int范围内。
+
+
+输出描述:
+输出为一个整数，即为优雅的点的个数
+
+输入例子1:
+25
+
+输出例子1:
+12
+*/
+// int main(){
+// 	int n;
+// 	cin>>n;
+// 	int s=n;
+// 	n=sqrt(n);
+// 	//cout<<n;
+// 	int start=-n;
+// 	int end=n;
+// 	int res=0;
+// 	for(int i=start;i<=end;i++){
+// 		int t=s-i*i;
+// 		int t1=sqrt(t);
+// 		if(t1*t1==t){
+// 			res++;
+// 			if(t1!=0)res++;
+// 		}
+// 	}
+// 	cout<<res<<endl;
+// 	return 0;
+// }
+//
+/*
+[编程题] 跳石板
+时间限制：1秒
+空间限制：32768K
+小易来到了一条石板路前，每块石板上从1挨着编号为：1、2、3.......
+这条石板路要根据特殊的规则才能前进：对于小易当前所在的编号为K的 石板，小易单次只能往前跳K的一个约数(不含1和K)步，即跳到K+X(X为K的一个非1和本身的约数)的位置。 小易当前处在编号为N的石板，他想跳到编号恰好为M的石板去，小易想知道最少需要跳跃几次可以到达。
+例如：
+N = 4，M = 24：
+4->6->8->12->18->24
+于是小易最少需要跳跃5次，就可以从4号石板跳到24号石板 
+输入描述:
+输入为一行，有两个整数N，M，以空格隔开。
+(4 ≤ N ≤ 100000)
+(N ≤ M ≤ 100000)
+
+
+输出描述:
+输出小易最少需要跳跃的步数,如果不能到达输出-1
+
+输入例子1:
+4 24
+
+输出例子1:
+5
+*/
+// int main(){
+// 	int n=0,m=0;
+// 	cin>>n>>m;
+// 	if(m<n){
+// 		cout<<-1<<endl;
+// 		return 0;
+// 	}
+// 	if(m==n){
+// 		cout<<0<<endl;
+// 		return 0;
+// 	}	 
+
+// 	vector<int> vec(m+1,0x7fffffff);
+// 	vec[n]=0;
+// 	int t=1;
+// 	for(int i=n;i<=m;i++){
+// 		if(vec[i]==0x7fffffff)continue;
+// 		t=1;
+// 		for(int j=2;j*j<=i;j++){
+// 			if(i%j)continue;
+// 			if(i+j<=m&&vec[i+j]>vec[i]+1)vec[i+j]=vec[i]+1;
+// 			if (i + i / j <= m && vec[i + i / j]>vec[i] + 1)vec[i + i / j] = vec[i] + 1;
+// 			// if(i%j==0&&(i+i/j)<=m){
+// 			// 	int x=vec[i]+1;
+// 			// 	vec[i+i/j]=min(vec[i+i/j],x);
+// 			// }
+// 			//if(i+j==m)break;
+// 		}
+// 	}
+// 	//for(auto i:vec)cout<<i<<endl;
+// 	if(vec[m]==0x7fffffff)cout<<-1<<endl;
+// 	else cout<<vec[m]<<endl;
+// 	return 0;
+// }
+// #include <iostream>
+// using namespace std;
+
+// int ans[100001];
+
+// int main()
+// {
+// 	int n, m;
+// 	cin >> n >> m;
+// 	if (n == m)
+// 	{
+// 		cout << 0;
+// 		return 0;
+// 	}
+// 	for (int i = n+1; i <= m; i++)ans[i] = 100000;
+// 	ans[n] = 0;
+// 	for (int i = n; i < m; i++)	for (int j = 2; j*j <= i; j++)
+// 	{
+// 		if (i%j)continue;
+// 		if (i + j <= m && ans[i + j]>ans[i] + 1)ans[i + j] = ans[i] + 1;
+// 		if (i + i / j <= m && ans[i + i / j]>ans[i] + 1)ans[i + i / j] = ans[i] + 1;
+// 	}
+// 	if (ans[m] == 100000)ans[m] = -1;
+// 	cout << ans[m];
+// 	return 0;
+// }
+// int main(){
+// 	int i;
+// 	int pid=fork();
+// 	if(pid==0){
+// 		for(i=0;i<20;i++)printf("I am Child\n");
+// 	}
+// 	else{
+// 		printf("I am Parent\n");
+// 		while(1);
+// 	}
+// }
+struct A{
+    char a[3]{0,1,2};
+};
 int main(){
-	int a[]{1, 2, 3, 5};
-	fun({ { "liu", 2 }, { "feng", 3 } });
-	return 0;
+    vector<A>v;
+    int x=0;
+    
+    A *a=new A();
+    A b;
+    v.push_back(b);
+    v.push_back(b);
+    cout<<&b<<endl;
+    cout<<a<<endl;
+    cout<<&v[0]<<endl;
+    cout<<&(v[1])<<endl;
+    
+    cout<<&x<<endl;
+    return 0;
 }

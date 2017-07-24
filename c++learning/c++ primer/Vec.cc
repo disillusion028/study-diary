@@ -18,12 +18,13 @@ int main(){
     // std::cout<<myvec2.size()<<std::endl;
     std::clock_t b_start=std::clock();
     Vec<int> v;
-    for(int i=0;i<10000000;i++){
+    for(int i=0;i<1000;i++){
         v.push_back(i);
     }
     
     std::clock_t b_end=std::clock();
     std::cout<<(b_end-b_start)<<"us"<<std::endl;
     std::cout<<v.size()<<std::endl;
+    std::cout<<v<<std::endl;
     return 0;
 }

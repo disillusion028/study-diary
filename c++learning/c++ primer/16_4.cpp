@@ -3,7 +3,7 @@
 #include <vector>
 #include <list>
 using namespace std;
-
+vector<int>a;
 template<typename Iter,typename T>
 Iter Myfind(Iter first,const Iter last,const T &value){
     while(first!=last){
