@@ -9,6 +9,13 @@
         "array": "cpp",
         "initializer_list": "cpp",
         "type_traits": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "fcntl.h": "c",
+        "fcntl2.h": "c",
+        "libio.h": "c",
+        "stddef.h": "c",
+        "stdio2.h": "c",
+        "unistd.h": "c",
+        "errno.h": "c"
     }
 }
