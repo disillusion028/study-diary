@@ -33,6 +33,14 @@
         "memory": "cpp",
         "stdexcept": "cpp",
         "system_error": "cpp",
-        "deque": "cpp"
+        "deque": "cpp",
+        "libio.h": "c",
+        "stddef.h": "c",
+        "unistd.h": "c",
+        "sched.h": "c",
+        "time.h": "c",
+        "types.h": "c",
+        "typesizes.h": "c",
+        "concurrence.h": "c"
     }
 }
